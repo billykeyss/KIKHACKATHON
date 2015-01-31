@@ -19,6 +19,7 @@ import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.pm.PackageManager;
@@ -33,10 +34,10 @@ import java.util.Arrays;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class MainActivity extends ActionBarActivity {
 
-    String send = "HelloWorld";
+    String send = collectInfo();
     NdefRecord beamThis;
 
-    byte[] textBytes = send.getBytes();
+    //byte[] textBytes = send.getBytes();
 
     //NdefRecord record = new NdefRecord(NdefRecord.TNF_WELL_KNOWN,
    // NdefRecord.RTD_TEXT, new byte[0], textBytes);
@@ -45,6 +46,19 @@ public class MainActivity extends ActionBarActivity {
 
 
     Button sendInfo;
+
+    protected String collectInfo(){
+        EditText name = (EditText)findViewById(R.id.name);
+        EditText phone = (EditText)findViewById(R.id.phoneNumber);
+        EditText email = (EditText)findViewById(R.id.email);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(name.getText() + ";");
+        sb.append(phone.getText() + ";");
+        sb.append(email.getText() + ";");
+
+        return sb.toString();
+    }
 
     //Translates input string into a byte array
     public NdefRecord createTextRecord(String payload){
