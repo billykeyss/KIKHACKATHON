@@ -25,6 +25,7 @@ import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter.CreateBeamUrisCallback;
 import android.net.Uri;
 import android.nfc.NfcAdapter.CreateBeamUrisCallback;
+import java.util.Locale;
 
 import java.util.Arrays;
 
@@ -32,11 +33,14 @@ import java.util.Arrays;
 public class MainActivity extends ActionBarActivity {
 
     String send = "HelloWorld";
-    String languageCode = "English";
 
-    NdefRecord translate = NdefRecord.createTextRecord( null, send);
+    byte[] textBytes = send.getBytes();
 
-    NdefMessage beamThis = new NdefMessage(translate);
+    NdefRecord record = new NdefRecord(NdefRecord.TNF_WELL_KNOWN,
+            NdefRecord.RTD_TEXT, new byte[0], textBytes);
+
+
+    NdefMessage beamThis = new NdefMessage(record);
 
     Button sendInfo;
 
@@ -53,20 +57,20 @@ public class MainActivity extends ActionBarActivity {
 
         // Defining Buttons
         sendInfo = (Button) findViewById(R.id.sendInfo);
-        sendInfo.setOnClickListener(new OnClickListener() {
+
+        OnClickListener listener = new OnClickListener() {
             @Override
             public void onClick(View v) {
-                nfcAdapter.setNdefPushMessage(beamThis, this);
+                //Send out the Ndef message object on button click
+                nfcAdapter.setNdefPushMessage(beamThis, getParent());
             }
-        });
+        };
 
+        sendInfo.setOnClickListener(listener);
 
-
-
-
-
-        nfcAdapter.setNdefPushMessage(beamThis, this);
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
