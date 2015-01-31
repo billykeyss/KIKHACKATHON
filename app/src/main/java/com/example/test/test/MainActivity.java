@@ -27,22 +27,36 @@ import android.net.Uri;
 import android.nfc.NfcAdapter.CreateBeamUrisCallback;
 import java.util.Locale;
 
+
 import java.util.Arrays;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class MainActivity extends ActionBarActivity {
 
     String send = "HelloWorld";
+    NdefRecord beamThis;
 
     byte[] textBytes = send.getBytes();
 
-    NdefRecord record = new NdefRecord(NdefRecord.TNF_WELL_KNOWN,
-            NdefRecord.RTD_TEXT, new byte[0], textBytes);
+    //NdefRecord record = new NdefRecord(NdefRecord.TNF_WELL_KNOWN,
+   // NdefRecord.RTD_TEXT, new byte[0], textBytes);
 
 
-    NdefMessage beamThis = new NdefMessage(record);
+
 
     Button sendInfo;
+
+    //Translates input string into a byte array
+    public NdefRecord createTextRecord(String payload){
+        byte[] textBytes = payload.getBytes();
+        byte[] data = new byte[1 + textBytes.length];
+        data[0] = (byte) 0;
+        System.arraycopy(textBytes, 0, data, 1, textBytes.length);
+        NdefRecord record = new NdefRecord(NdefRecord.TNF_WELL_KNOWN,
+                NdefRecord.RTD_TEXT, new byte[0], data);
+        //NdefMessage beamThis = new NdefMessage(record);
+        return record;
+    }
 
 
     @Override
@@ -50,6 +64,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        beamThis = createTextRecord(send.toString());
+        final NdefMessage finalPayload = new NdefMessage(beamThis);
 
         final NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (nfcAdapter == null) return;  // NFC not available on this device
@@ -62,7 +78,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 //Send out the Ndef message object on button click
-                nfcAdapter.setNdefPushMessage(beamThis, getParent());
+                nfcAdapter.setNdefPushMessage(finalPayload, MainActivity.this);
             }
         };
 
