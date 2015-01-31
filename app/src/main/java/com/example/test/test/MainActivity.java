@@ -34,8 +34,9 @@ import java.util.Arrays;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class MainActivity extends ActionBarActivity {
 
-    String send = collectInfo();
+    String send = "HelloWorld";
     NdefRecord beamThis;
+    EditText name;
 
     //byte[] textBytes = send.getBytes();
 
@@ -46,6 +47,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     Button sendInfo;
+
 
     protected String collectInfo(){
         EditText name = (EditText)findViewById(R.id.name);
@@ -78,7 +80,9 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        beamThis = createTextRecord(send.toString());
+
+
+        beamThis = createTextRecord(send);
         final NdefMessage finalPayload = new NdefMessage(beamThis);
 
         final NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
