@@ -55,7 +55,6 @@ public class MainActivity extends ActionBarActivity {
         EditText email = (EditText)findViewById(R.id.email);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("HELLO");
         sb.append(name.getText().toString() + ";");
         sb.append(phone.getText() + ";");
         sb.append(email.getText() + ";");
@@ -81,14 +80,12 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        send = collectInfo();
+        //send = collectInfo();
 
-        beamThis = createTextRecord(send);
-        final NdefMessage finalPayload = new NdefMessage(beamThis);
+
+        //if (nfcAdapter == null) return;  // NFC not available on this device
 
         final NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        if (nfcAdapter == null) return;  // NFC not available on this device
-
 
         // Defining Buttons
         sendInfo = (Button) findViewById(R.id.sendInfo);
@@ -97,10 +94,15 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 //Send out the Ndef message object on button click
+                send = collectInfo();
+
+                beamThis = createTextRecord(send);
+                final NdefMessage finalPayload = new NdefMessage(beamThis);
+
+                
                 nfcAdapter.setNdefPushMessage(finalPayload, MainActivity.this);
             }
         };
-
         sendInfo.setOnClickListener(listener);
 
     }
