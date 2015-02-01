@@ -1,6 +1,7 @@
 package com.example.test.test;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -20,13 +21,13 @@ import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.content.pm.PackageManager;
-import android.nfc.NfcAdapter.CreateBeamUrisCallback;
-import android.net.Uri;
-import android.nfc.NfcAdapter.CreateBeamUrisCallback;
-import java.util.Locale;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+
+import java.io.IOException;
+import java.lang.Object;
+import java.io.FileWriter;
 
 
 import java.util.Arrays;
@@ -37,24 +38,48 @@ public class MainActivity extends ActionBarActivity {
     String send;
     NdefRecord beamThis;
     EditText name;
+    EditText phone;
+    EditText email;
 
-    //byte[] textBytes = send.getBytes();
+    String FILENAME = "hello_file";
 
-    //NdefRecord record = new NdefRecord(NdefRecord.TNF_WELL_KNOWN,
-   // NdefRecord.RTD_TEXT, new byte[0], textBytes);
-
-
+    FileOutputStream fos;
+    FileInputStream fis;
+    StringBuilder sb;
 
 
     Button sendInfo;
 
+    private void saveInfo(StringBuilder sb){
+        try {
+            String test = getFilesDir().toString();
+            fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            fos.write(sb.toString().getBytes());
+            fos.close();
+        }catch (IOException e){
+        }
+    }
+
+    private void retrieveInfo(){
+        try {
+            byte[] temp = new byte[100];
+            int counter = 0;
+            fis = openFileInput(FILENAME);
+            fis.read(temp,0,counter);
+            fis.close();
+            String str = new String(temp);
+            if(temp[0]!= 0){
+                String[] retInfo = str.split(";");
+                name.setText(retInfo[0]);
+                phone.setText(retInfo[1]);
+                email.setText(retInfo[2]);
+            }
+        }catch (IOException e){
+        }
+    }
 
     public String collectInfo(){
-        EditText name = (EditText)findViewById(R.id.name);
-        EditText phone = (EditText)findViewById(R.id.phoneNumber);
-        EditText email = (EditText)findViewById(R.id.email);
-
-        StringBuilder sb = new StringBuilder();
+        sb = new StringBuilder();
         sb.append(name.getText().toString() + ";");
         sb.append(phone.getText() + ";");
         sb.append(email.getText() + ";");
@@ -80,7 +105,12 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //send = collectInfo();
+        //Initialize views
+        name = (EditText)findViewById(R.id.name);
+        phone = (EditText)findViewById(R.id.phoneNumber);
+        email = (EditText)findViewById(R.id.email);
+
+        retrieveInfo();
 
 
         //if (nfcAdapter == null) return;  // NFC not available on this device
@@ -95,6 +125,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 //Send out the Ndef message object on button click
                 send = collectInfo();
+                saveInfo(sb);
 
                 beamThis = createTextRecord(send);
                 final NdefMessage finalPayload = new NdefMessage(beamThis);
