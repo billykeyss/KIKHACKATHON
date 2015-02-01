@@ -1,5 +1,6 @@
 package com.example.test.test;
 
+import android.content.Context;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.AsyncTask;
@@ -14,7 +15,12 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.provider.ContactsContract;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import android.content.ContentProviderOperation;
+import java.util.Random;
 
 
 public class ReceiveActivity extends ActionBarActivity {
@@ -53,8 +59,44 @@ public class ReceiveActivity extends ActionBarActivity {
             //mTextView.setText(R.string.explanation);
         }
 
+        /*Thread thread = new Thread( new Runnable() {
+            public void run() {
+                while(true) {
+                    Random r = new Random();
+                    final int number = r.nextInt(15 - 0) + 15;
+                    final String[] colorArray = {"#BED661","#89E894","#78D5E3","#7AF5F5","#34DDDD","#93E2D5"};
+
+                            runOnUiThread( new Runnable() {
+                                               public void run() {
+
+                                                   TextView name = (TextView) findViewByID(R.id.textView_display);
+                                                   TextView phone = (TextView) findViewById(R.id.phoneNumber);
+                                                   TextView email = (TextView) findViewById(R.id.email);
+
+                                                   // get your TextView ;
+                                                           name.setTextColor(colorArray[number]);
+                                                           phone.setTextColor(colorArray[number]);
+                                                           email.setTextColor(colorArray[number]);
+                                                   {
+                                                       {
+
+                                                           try {
+                                                               Thread.sleep(1000);
+                                                           } catch (InterruptedException e) {
+                                                           }
+                                                       }
+                                                   }
+                                               }
+
+                                               thread.start();
+                                )}}}}*/
+
         //Handle the Intent
         handleIntent(getIntent());
+
+
+
+
     }
 
     /**
@@ -125,7 +167,66 @@ public class ReceiveActivity extends ActionBarActivity {
                 mTextView.setText( components[0]);
                 phoneNumber.setText(components[1]);
                 email.setText(components[2]);
+
+                String DisplayName = components[0];
+                String MobileNumber = components[1];
+                String emailID = components[2];
+
+                ArrayList< ContentProviderOperation > ops = new ArrayList < ContentProviderOperation > ();
+
+                ops.add(ContentProviderOperation.newInsert(
+                        ContactsContract.RawContacts.CONTENT_URI)
+                        .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
+                        .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
+                        .build());
+
+                //------------------------------------------------------ Names
+                if (DisplayName != null) {
+                    ops.add(ContentProviderOperation.newInsert(
+                            ContactsContract.Data.CONTENT_URI)
+                            .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                            .withValue(ContactsContract.Data.MIMETYPE,
+                                    ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                            .withValue(
+                                    ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
+                                    DisplayName).build());
+                }
+
+                //------------------------------------------------------ Mobile Number
+                if (MobileNumber != null) {
+                    ops.add(ContentProviderOperation.
+                            newInsert(ContactsContract.Data.CONTENT_URI)
+                            .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                            .withValue(ContactsContract.Data.MIMETYPE,
+                                    ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, MobileNumber)
+                            .withValue(ContactsContract.CommonDataKinds.Phone.TYPE,
+                                    ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
+                            .build());
+                }
+
+                //------------------------------------------------------ Email
+                if (emailID != null) {
+                    ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                            .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                            .withValue(ContactsContract.Data.MIMETYPE,
+                                    ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                            .withValue(ContactsContract.CommonDataKinds.Email.DATA, emailID)
+                            .withValue(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_WORK)
+                            .build());
+                }
+
+                // Asking the Contact provider to create a new contact
+                try {
+                    getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    //Toast.makeText(myContext, "Exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
             }
+            Context context = getApplicationContext();
+            Toast.makeText(context, "Contact has been added. Congratulations! You have just made a new friend.", Toast.LENGTH_LONG).show();
         }
     }
 

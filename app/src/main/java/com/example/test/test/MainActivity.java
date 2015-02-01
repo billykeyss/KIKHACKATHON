@@ -21,6 +21,7 @@ import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.EditText;
+<<<<<<< HEAD
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
@@ -29,11 +30,24 @@ import java.io.IOException;
 import java.lang.Object;
 import java.io.FileWriter;
 
+=======
+import android.widget.TextView;
+import android.widget.Toast;
+import android.content.pm.PackageManager;
+import android.nfc.NfcAdapter.CreateBeamUrisCallback;
+import android.net.Uri;
+import android.nfc.NfcAdapter.CreateBeamUrisCallback;
+import java.util.Locale;
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
+>>>>>>> FETCH_HEAD
 
 import java.util.Arrays;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity{
 
     String send;
     NdefRecord beamThis;
@@ -41,11 +55,18 @@ public class MainActivity extends ActionBarActivity {
     EditText phone;
     EditText email;
 
+<<<<<<< HEAD
     String FILENAME = "hello_file";
 
     FileOutputStream fos;
     FileInputStream fis;
     StringBuilder sb;
+=======
+    //byte[] textBytes = send.getBytes();
+
+    //NdefRecord record = new NdefRecord(NdefRecord.TNF_WELL_KNOWN,
+    // NdefRecord.RTD_TEXT, new byte[0], textBytes);
+>>>>>>> FETCH_HEAD
 
 
     Button sendInfo;
@@ -60,6 +81,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+<<<<<<< HEAD
     private void retrieveInfo(){
         try {
             byte[] temp = new byte[100];
@@ -77,6 +99,12 @@ public class MainActivity extends ActionBarActivity {
         }catch (IOException e){
         }
     }
+=======
+    public String collectInfo() {
+        EditText name = (EditText) findViewById(R.id.name);
+        EditText phone = (EditText) findViewById(R.id.phoneNumber);
+        EditText email = (EditText) findViewById(R.id.email);
+>>>>>>> FETCH_HEAD
 
     public String collectInfo(){
         sb = new StringBuilder();
@@ -88,7 +116,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     //Translates input string into a byte array
-    public NdefRecord createTextRecord(String payload){
+    public NdefRecord createTextRecord(String payload) {
         byte[] textBytes = payload.getBytes();
         byte[] data = new byte[1 + textBytes.length];
         data[0] = (byte) 0;
@@ -103,6 +131,10 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_main);
 
         //Initialize views
@@ -130,35 +162,19 @@ public class MainActivity extends ActionBarActivity {
                 beamThis = createTextRecord(send);
                 final NdefMessage finalPayload = new NdefMessage(beamThis);
 
-                
                 nfcAdapter.setNdefPushMessage(finalPayload, MainActivity.this);
             }
         };
         sendInfo.setOnClickListener(listener);
 
-    }
 
+        //name = (EditText) findViewById(R.id.name);
+        //phone = (EditText) findV
+        // iewById(R.id.phoneNumber);
+        //email = (EditText) findViewById(R.id.email);
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        //phone.setOnClickListener(this);
+        //name.setOnClickListener(this);
+        //email.setOnClickListener(this);
     }
 }
