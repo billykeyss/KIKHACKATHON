@@ -22,6 +22,8 @@ public class ReceiveActivity extends ActionBarActivity {
     public static final String MIME_TEXT_PLAIN = "text/plain";
     public static final String TAG = "ReceiveResponse";
     private TextView mTextView;
+    private TextView phoneNumber;
+    private TextView email;
     private NfcAdapter mNfcAdapter;
 
 
@@ -31,6 +33,8 @@ public class ReceiveActivity extends ActionBarActivity {
         setContentView(R.layout.activity_receive);
 
         mTextView = (TextView) findViewById(R.id.textView_display);
+        phoneNumber = (TextView) findViewById(R.id.phoneNumber);
+        email = (TextView) findViewById(R.id.email);
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         //Check if nfc is supported
@@ -43,6 +47,8 @@ public class ReceiveActivity extends ActionBarActivity {
         //Check if nfc is enabled
         if (!mNfcAdapter.isEnabled()) {
             mTextView.setText("NFC is disabled.");
+            phoneNumber.setText("");
+            email.setText("");
         } else {
             //mTextView.setText(R.string.explanation);
         }
@@ -114,7 +120,11 @@ public class ReceiveActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-                mTextView.setText("Read content: " + result);
+                String[] components = result.split(";");
+
+                mTextView.setText( components[0]);
+                phoneNumber.setText(components[1]);
+                email.setText(components[2]);
             }
         }
     }

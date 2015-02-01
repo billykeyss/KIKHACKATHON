@@ -34,7 +34,7 @@ import java.util.Arrays;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class MainActivity extends ActionBarActivity {
 
-    String send = "HelloWorld";
+    String send;
     NdefRecord beamThis;
     EditText name;
 
@@ -49,13 +49,14 @@ public class MainActivity extends ActionBarActivity {
     Button sendInfo;
 
 
-    protected String collectInfo(){
+    public String collectInfo(){
         EditText name = (EditText)findViewById(R.id.name);
         EditText phone = (EditText)findViewById(R.id.phoneNumber);
         EditText email = (EditText)findViewById(R.id.email);
 
         StringBuilder sb = new StringBuilder();
-        sb.append(name.getText() + ";");
+        sb.append("HELLO");
+        sb.append(name.getText().toString() + ";");
         sb.append(phone.getText() + ";");
         sb.append(email.getText() + ";");
 
@@ -80,7 +81,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        send = collectInfo();
 
         beamThis = createTextRecord(send);
         final NdefMessage finalPayload = new NdefMessage(beamThis);
