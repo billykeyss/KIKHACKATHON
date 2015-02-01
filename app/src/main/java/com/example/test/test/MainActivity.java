@@ -21,7 +21,7 @@ import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.EditText;
-<<<<<<< HEAD
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.lang.Object;
 import java.io.FileWriter;
 
-=======
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.pm.PackageManager;
@@ -42,7 +41,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
->>>>>>> FETCH_HEAD
+
 
 import java.util.Arrays;
 
@@ -55,18 +54,12 @@ public class MainActivity extends ActionBarActivity{
     EditText phone;
     EditText email;
 
-<<<<<<< HEAD
+
     String FILENAME = "hello_file";
 
     FileOutputStream fos;
     FileInputStream fis;
     StringBuilder sb;
-=======
-    //byte[] textBytes = send.getBytes();
-
-    //NdefRecord record = new NdefRecord(NdefRecord.TNF_WELL_KNOWN,
-    // NdefRecord.RTD_TEXT, new byte[0], textBytes);
->>>>>>> FETCH_HEAD
 
 
     Button sendInfo;
@@ -81,7 +74,7 @@ public class MainActivity extends ActionBarActivity{
         }
     }
 
-<<<<<<< HEAD
+
     private void retrieveInfo(){
         try {
             byte[] temp = new byte[100];
@@ -99,12 +92,6 @@ public class MainActivity extends ActionBarActivity{
         }catch (IOException e){
         }
     }
-=======
-    public String collectInfo() {
-        EditText name = (EditText) findViewById(R.id.name);
-        EditText phone = (EditText) findViewById(R.id.phoneNumber);
-        EditText email = (EditText) findViewById(R.id.email);
->>>>>>> FETCH_HEAD
 
     public String collectInfo(){
         sb = new StringBuilder();
