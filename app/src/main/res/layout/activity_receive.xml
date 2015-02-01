@@ -11,9 +11,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView_display"
         android:gravity="center"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="218dp" />
+        android:textSize="32sp"
+        android:textColor = "#388E8E"
+        android:layout_above="@+id/phoneNumber"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,18 +22,23 @@
         android:text="Phone Number"
         android:gravity="center"
         android:id="@+id/phoneNumber"
+        android:layout_marginTop="30dp"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textColor = "#388E8E"
+        android:textSize="32sp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="Email"
+        android:textColor = "#388E8E"
         android:id="@+id/email"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="30dp"
         android:layout_below="@+id/phoneNumber"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textSize="32sp"/>
 
 
 </RelativeLayout>
