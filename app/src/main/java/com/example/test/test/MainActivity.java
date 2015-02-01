@@ -2,6 +2,7 @@ package com.example.test.test;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -54,16 +55,18 @@ public class MainActivity extends ActionBarActivity{
     EditText phone;
     EditText email;
 
-
-    String FILENAME = "hello_file";
+    String[] PERSERVED = new String[3];
 
     FileOutputStream fos;
     FileInputStream fis;
     StringBuilder sb;
+    SharedPreferences prefs;
+    private static final String PREFS_NAME = "mysharedprefs";
 
 
     Button sendInfo;
 
+    /*
     private void saveInfo(StringBuilder sb){
         try {
             String test = getFilesDir().toString();
@@ -91,7 +94,7 @@ public class MainActivity extends ActionBarActivity{
             }
         }catch (IOException e){
         }
-    }
+    }*/
 
     public String collectInfo(){
         sb = new StringBuilder();
@@ -99,6 +102,9 @@ public class MainActivity extends ActionBarActivity{
         sb.append(phone.getText() + ";");
         sb.append(email.getText() + ";");
 
+        PERSERVED[0] = name.getText().toString();
+        PERSERVED[1] = phone.getText().toString();
+        PERSERVED[2] = email.getText().toString();
         return sb.toString();
     }
 
@@ -118,6 +124,12 @@ public class MainActivity extends ActionBarActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        prefs = getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
+        //get a value
+        PERSERVED[0] = prefs.getString("name", null);
+        PERSERVED[1] = prefs.getString("phone", null);
+        PERSERVED[2] = prefs.getString("email", null);
+
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -129,8 +141,12 @@ public class MainActivity extends ActionBarActivity{
         phone = (EditText)findViewById(R.id.phoneNumber);
         email = (EditText)findViewById(R.id.email);
 
-        retrieveInfo();
-
+        PERSERVED[0] = prefs.getString("name", null);
+        PERSERVED[1] = prefs.getString("phone", null);
+        PERSERVED[2] = prefs.getString("email", null);
+        name.setText(PERSERVED[0]);
+        phone.setText(PERSERVED[1]);
+        email.setText(PERSERVED[2]);
 
         //if (nfcAdapter == null) return;  // NFC not available on this device
 
@@ -144,7 +160,10 @@ public class MainActivity extends ActionBarActivity{
             public void onClick(View v) {
                 //Send out the Ndef message object on button click
                 send = collectInfo();
-                saveInfo(sb);
+
+                prefs.edit().putString("name",PERSERVED[0]).commit();
+                prefs.edit().putString("phone",PERSERVED[1]).commit();
+                prefs.edit().putString("email",PERSERVED[2]).commit();
 
                 beamThis = createTextRecord(send);
                 final NdefMessage finalPayload = new NdefMessage(beamThis);
