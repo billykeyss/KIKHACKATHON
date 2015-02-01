@@ -1,5 +1,6 @@
 package com.example.test.test;
 
+import android.content.Context;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.AsyncTask;
@@ -224,6 +225,8 @@ public class ReceiveActivity extends ActionBarActivity {
                 }
 
             }
+            Context context = getApplicationContext();
+            Toast.makeText(context, "Contact has been added. Congratulations! You have just made a new friend.", Toast.LENGTH_LONG).show();
         }
     }
 
