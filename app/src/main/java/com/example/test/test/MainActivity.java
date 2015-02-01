@@ -3,48 +3,28 @@ package com.example.test.test;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.app.Activity;
-import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.nfc.NfcAdapter.CreateNdefMessageCallback;
-import android.nfc.NfcEvent;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.widget.EditText;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 
-import java.io.IOException;
-import java.lang.Object;
-import java.io.FileWriter;
-
-import android.widget.TextView;
-import android.widget.Toast;
-import android.content.pm.PackageManager;
-import android.nfc.NfcAdapter.CreateBeamUrisCallback;
-import android.net.Uri;
-import android.nfc.NfcAdapter.CreateBeamUrisCallback;
-import java.util.Locale;
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
+import java.util.regex.Pattern;
 
-import java.util.Arrays;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class MainActivity extends ActionBarActivity{
@@ -55,7 +35,7 @@ public class MainActivity extends ActionBarActivity{
     EditText phone;
     EditText email;
 
-    String[] PERSERVED = new String[3];
+    String[] PRESERVED = new String[3];
 
     FileOutputStream fos;
     FileInputStream fis;
@@ -66,45 +46,15 @@ public class MainActivity extends ActionBarActivity{
 
     Button sendInfo;
 
-    /*
-    private void saveInfo(StringBuilder sb){
-        try {
-            String test = getFilesDir().toString();
-            fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
-            fos.write(sb.toString().getBytes());
-            fos.close();
-        }catch (IOException e){
-        }
-    }
-
-
-    private void retrieveInfo(){
-        try {
-            byte[] temp = new byte[100];
-            int counter = 0;
-            fis = openFileInput(FILENAME);
-            fis.read(temp,0,counter);
-            fis.close();
-            String str = new String(temp);
-            if(temp[0]!= 0){
-                String[] retInfo = str.split(";");
-                name.setText(retInfo[0]);
-                phone.setText(retInfo[1]);
-                email.setText(retInfo[2]);
-            }
-        }catch (IOException e){
-        }
-    }*/
-
     public String collectInfo(){
         sb = new StringBuilder();
         sb.append(name.getText().toString() + ";");
         sb.append(phone.getText() + ";");
         sb.append(email.getText() + ";");
 
-        PERSERVED[0] = name.getText().toString();
-        PERSERVED[1] = phone.getText().toString();
-        PERSERVED[2] = email.getText().toString();
+        PRESERVED[0] = name.getText().toString();
+        PRESERVED[1] = phone.getText().toString();
+        PRESERVED[2] = email.getText().toString();
         return sb.toString();
     }
 
@@ -126,9 +76,9 @@ public class MainActivity extends ActionBarActivity{
         super.onCreate(savedInstanceState);
         prefs = getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
         //get a value
-        PERSERVED[0] = prefs.getString("name", null);
-        PERSERVED[1] = prefs.getString("phone", null);
-        PERSERVED[2] = prefs.getString("email", null);
+        PRESERVED[0] = prefs.getString("name", null);
+        PRESERVED[1] = prefs.getString("phone", null);
+        PRESERVED[2] = prefs.getString("email", null);
 
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -136,21 +86,21 @@ public class MainActivity extends ActionBarActivity{
 
         setContentView(R.layout.activity_main);
 
+        //if (nfcAdapter == null) return;  // NFC not available on this device
+
+        final NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
         //Initialize views
         name = (EditText)findViewById(R.id.name);
         phone = (EditText)findViewById(R.id.phoneNumber);
         email = (EditText)findViewById(R.id.email);
 
-        PERSERVED[0] = prefs.getString("name", null);
-        PERSERVED[1] = prefs.getString("phone", null);
-        PERSERVED[2] = prefs.getString("email", null);
-        name.setText(PERSERVED[0]);
-        phone.setText(PERSERVED[1]);
-        email.setText(PERSERVED[2]);
-
-        //if (nfcAdapter == null) return;  // NFC not available on this device
-
-        final NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        PRESERVED[0] = prefs.getString("name", null);
+        PRESERVED[1] = prefs.getString("phone", null);
+        PRESERVED[2] = prefs.getString("email", null);
+        name.setText(PRESERVED[0]);
+        phone.setText(PRESERVED[1]);
+        email.setText(PRESERVED[2]);
 
         // Defining Buttons
         sendInfo = (Button) findViewById(R.id.sendInfo);
@@ -158,29 +108,51 @@ public class MainActivity extends ActionBarActivity{
         OnClickListener listener = new OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Send out the Ndef message object on button click
-                send = collectInfo();
+                String test = email.getText().toString();
+                Context context = getApplicationContext();
 
-                prefs.edit().putString("name",PERSERVED[0]).commit();
-                prefs.edit().putString("phone",PERSERVED[1]).commit();
-                prefs.edit().putString("email",PERSERVED[2]).commit();
+                //Only checks for Email format when the field is not empty
+                if(test.length() > 1 && !checkEmail(email.getText().toString())){
+                    Toast.makeText(context, "Please check your email format", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    //Send out the Ndef message object on button click
+                    send = collectInfo();
 
-                beamThis = createTextRecord(send);
-                final NdefMessage finalPayload = new NdefMessage(beamThis);
+                    //Save user info to savedInstanceState everytime the user submits
+                    prefs.edit().putString("name", PRESERVED[0]).commit();
+                    prefs.edit().putString("phone", PRESERVED[1]).commit();
+                    prefs.edit().putString("email", PRESERVED[2]).commit();
 
-                nfcAdapter.setNdefPushMessage(finalPayload, MainActivity.this);
+                    beamThis = createTextRecord(send);
+                    final NdefMessage finalPayload = new NdefMessage(beamThis);
+                    //sendInfo.setBackgroundColor(Color.WHITE);
+                    nfcAdapter.setNdefPushMessage(finalPayload, MainActivity.this);
+                    Toast.makeText(context, "Now tap two phones together!", Toast.LENGTH_LONG).show();
+                    name.setCursorVisible(false);
+                    phone.setCursorVisible(false);
+                    email.setCursorVisible(false);
+                }
             }
         };
         sendInfo.setOnClickListener(listener);
 
+    }
 
-        //name = (EditText) findViewById(R.id.name);
-        //phone = (EditText) findV
-        // iewById(R.id.phoneNumber);
-        //email = (EditText) findViewById(R.id.email);
+    //Email Validator
+    //Source:
+    //http://stackoverflow.com/questions/1819142/how-should-i-validate-an-e-mail-address
+    public final Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
+            "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
+                    "\\@" +
+                    "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+                    "(" +
+                    "\\." +
+                    "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+                    ")+"
+    );
 
-        //phone.setOnClickListener(this);
-        //name.setOnClickListener(this);
-        //email.setOnClickListener(this);
+    private boolean checkEmail(String email) {
+        return EMAIL_ADDRESS_PATTERN.matcher(email).matches();
     }
 }
