@@ -4,41 +4,48 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
-    android:id="@+id/main">
+    android:id="@+id/main"
+    android:background="@color/white">
+
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send Info"
+        android:text="Share"
+        android:gravity="center"
         android:id="@+id/sendInfo"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="44dp"
-        android:layout_alignRight="@+id/clearData"
-        android:layout_alignEnd="@+id/clearData"
-        android:layout_alignLeft="@+id/clearData"
-        android:layout_alignStart="@+id/clearData" />
+        android:layout_below="@+id/email"
+        android:layout_marginTop="46dp"
+        android:background="@drawable/button"
+        android:layout_alignRight="@+id/email"
+        android:layout_alignEnd="@+id/email"
+        android:layout_alignLeft="@+id/email"
+        android:layout_alignStart="@+id/email" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
+        android:hint="Name"
+        android:gravity="center"
         android:ems="10"
         android:id="@+id/name"
-        android:layout_above="@+id/phoneNumber"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="59dp" />
+        android:layout_marginTop="104dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:inputType="phone"
         android:ems="10"
         android:id="@+id/phoneNumber"
-        android:text="Phone Number"
-        android:layout_centerVertical="true"
+        android:hint="Phone Number"
+        android:layout_below="@+id/name"
         android:layout_alignLeft="@+id/name"
-        android:layout_alignStart="@+id/name" />
+        android:layout_alignStart="@+id/name"
+        android:layout_marginTop="49dp" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -46,25 +53,11 @@
         android:inputType="textEmailAddress"
         android:ems="10"
         android:id="@+id/email"
-        android:text="E-mail"
+        android:hint="E-mail"
+        android:gravity="center"
         android:layout_below="@+id/phoneNumber"
         android:layout_alignLeft="@+id/phoneNumber"
         android:layout_alignStart="@+id/phoneNumber"
         android:layout_marginTop="41dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Clear Data"
-        android:id="@+id/clearData"
-        android:layout_above="@+id/sendInfo"
-        android:layout_centerHorizontal="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
